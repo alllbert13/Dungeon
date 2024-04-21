@@ -2,15 +2,15 @@
 #include "Item.h"
 #include "NPC.h"
 #include "Monster.h"
-Dungeon::Dungeon(){
-    player = Player();
-    rooms = {};
-}
+#include "Player.h"
+
+Dungeon::Dungeon(){}
 void Dungeon::createPlayer(){
     std::cout << "player name: " ;
     string name;
     cin >> name;
-    Player* newPlayer = new Player(name);
+    Player* newPlayer;
+    newPlayer->setName(name);
     player = *newPlayer;
 }
 void Dungeon::createMap(){
