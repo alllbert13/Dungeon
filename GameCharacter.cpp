@@ -74,3 +74,4 @@ int GameCharacter::getThirsty() {
 int GameCharacter::getMoney(){
     return money;
 }
+

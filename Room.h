@@ -7,9 +7,8 @@
 #include "Object.h"
 #include "GameCharacter.h"
 #include "NPC.h"
-
 using namespace std;
-
+class Item;
 class Room
 {
 private:

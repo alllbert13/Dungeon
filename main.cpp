@@ -11,9 +11,7 @@
 using namespace std;
 
 int main(){
-    cout << "hello world" << endl;
     Dungeon dungeon = Dungeon();
     dungeon.runDungeon();
-    cout << "Hello World" << endl;
     return 0;
 }

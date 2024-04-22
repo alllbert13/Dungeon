@@ -5,9 +5,8 @@
 #include <string>
 #include <vector>
 #include "Object.h"
-#include "Player.h"
-using namespace std;
 
+using namespace std;
 class Player;
 
 class Item: public Object
@@ -65,6 +64,7 @@ private:
     int attack;
 public:
     Sword(int);
+    Sword();
     void useItem(Player*);
     int getAttack();
     void setAttack(int);
@@ -77,6 +77,7 @@ private:
     int defense;
 public:
     Armor(int);
+    Armor();
     void useItem(Player*);
     int getDefense();
     void setDefense(int);

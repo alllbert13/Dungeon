@@ -5,9 +5,9 @@
 #include <string>
 #include <vector>
 #include "GameCharacter.h"
-#include "Player.h"
-#include "Item.h"
 
+class Player;
+class Item;
 using namespace std;
 
 class NPC: public GameCharacter

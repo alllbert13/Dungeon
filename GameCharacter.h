@@ -5,7 +5,6 @@
 #include <string>
 #include "Object.h"
 using namespace std;
-
 class GameCharacter: public Object
 {
 private:

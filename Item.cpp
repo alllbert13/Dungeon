@@ -1,4 +1,5 @@
 #include "Item.h"
+#include "Player.h"
 
 Item::Item():Object("empty", "empty"){}
 Item::Item(std::string Name): Object(Name, "Item"){}
@@ -48,43 +49,70 @@ void LifePotion::useItem(Player* player){
         player->setCurrentHealth(player->getMaxHealth());
     }
 }
+Sword::Sword(int atk): Item("sword"), attack(atk) {}
 
-Sword::Sword(int Attack): Item("sword"), attack(Attack){};
-void Sword::setAttack(int Attack){
-    attack = Attack;
+void Sword::setAttack(int atk){
+    attack = atk;
 }
+
 int Sword::getAttack(){
     return attack;
 }
+
+Sword::Sword(){}
+
+Armor::Armor(){}
+
 void Sword::useItem(Player* player){
-    if(player->getSword() == NULL){
+    if(player == nullptr) {
+        std::cout << "Invalid player" << std::endl;
+        return;
+    }
+    if(player->getSword() == nullptr){
         player->setSword(this);
     }
     else{
-        std::cout << "you have already use a sword" << std::endl;
+        std::cout << "You have already used a sword" << std::endl;
     }
 }
+
 void Sword::remove(Player* player){
-    player->setSword(NULL);
+    if(player == nullptr) {
+        std::cout << "Invalid player" << std::endl;
+        return;
+    }
+    player->setSword(nullptr);
 }
 
-Armor::Armor(int Defense):Item("Armor"), defense(Defense){}
-void Armor::setDefense(int Defense){
-    defense = Defense;
+Armor::Armor(int def): Item("Armor"), defense(def) {}
+
+void Armor::setDefense(int def){
+    defense = def;
 }
+
 int Armor::getDefense(){
     return defense;
 }
+
 void Armor::useItem(Player* player){
-    if(player->getArmor() == NULL){
+    if(player == nullptr) {
+        std::cout << "Invalid player" << std::endl;
+        return;
+    }
+    if(player->getArmor() == nullptr){
         player->setArmor(this);
     }
     else{
-        std::cout << "you have already use a armor" << std::endl;
+        std::cout << "You have already used an armor" << std::endl;
     }
 }
+
 void Armor::remove(Player* player){
-    player->setArmor(NULL);
+    if(player == nullptr) {
+        std::cout << "Invalid player" << std::endl;
+        return;
+    }
+    player->setArmor(nullptr);
 }
 
 HeartContainer::HeartContainer():Item("heartContainer"){}

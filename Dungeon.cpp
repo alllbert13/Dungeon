@@ -4,12 +4,12 @@
 #include "Monster.h"
 #include "Player.h"
 
-Dungeon::Dungeon(){}
+Dungeon::Dungeon() = default;
 void Dungeon::createPlayer(){
     std::cout << "player name: " ;
     string name;
     cin >> name;
-    Player* newPlayer;
+    Player* newPlayer = new Player();
     newPlayer->setName(name);
     player = *newPlayer;
 }
@@ -25,12 +25,15 @@ void Dungeon::runDungeon(){
     Meet meet1(2);
     Sword frompig(2);
     Monster pig("pig", 5, 1, 1, 10, {&meet1});
-    Room room1("swamp", 1, {&pig, &frompig});
-    rooms = {};
+    Room room1("swamp", 1, {&pig, &frompig});  
     rooms.push_back(room1);
-    createPlayer();
-    while(!checkGameLogic()){
-        int command;
+    cout << "player name: ";
+    string Name;
+    cin >> Name;
+    cout << endl;
+    player = Player(Name);
+    int command;
+    while(checkGameLogic()){
         int length = player.getCurrentRoom()->getObjects().size();
         showCommand();
         std::cin >> command;

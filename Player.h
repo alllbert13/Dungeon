@@ -1,17 +1,18 @@
 #ifndef PLAYER_H_INCLUDED
 #define PLAYER_H_INCLUDED
 
+class Sword;
+class Armor;
+class Item;
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include "Room.h"
-#include "Item.h"
 #include "Monster.h"
+#include "Item.h"
 
 using namespace std;
-
-class Item;
-
 class Player
 {
 private:

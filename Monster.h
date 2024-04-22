@@ -6,9 +6,8 @@
 #include <vector>
 #include "GameCharacter.h"
 #include "Player.h"
-
+class Item;
 using namespace std;
-
 class Monster: public GameCharacter
 {
 private:
@@ -18,9 +17,7 @@ public:
     Monster(string,int,int,int, int, vector<Item*>);
     void presentItem();
     void defeated(Player*);
-    void setMoney(int);
     void setCommodity(vector<Item*>);
-    int getMoney();
     vector<Item*> getCommodity();
     void takeItem(Player*);
     /* Virtual function that you need to complete   */

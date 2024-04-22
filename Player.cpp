@@ -1,4 +1,11 @@
 #include "Player.h"
+#include "Item.h"
+#include "Monster.h"
+#include "NPC.h"
+
+
+Player::Player() = default;
+
 Player::Player(string Name){
     name = Name;
     maxHealth = 10;
@@ -14,6 +21,7 @@ Player::Player(string Name){
     Thirst = false;
     sword = NULL;
     armor = NULL;
+    head = 0;
 }
 void Player::addItem(Item* newItem){
     if(inventory.size() >= 12){
@@ -341,13 +349,6 @@ void Player::setThirst(bool istrue){
     Thirst = istrue;
 }
 
-void Player::setMoney(int Money){
-    money = Money;
-}
-
-int Player::getMoney(){
-    return money;
-}
 
 bool Player::checkIsDead(){
     if(currentHealth <= 0){

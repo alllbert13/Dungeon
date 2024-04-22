@@ -1,12 +1,14 @@
 #include "NPC.h"
 #include "Item.h"
 #include "Room.h"
+#include "Player.h"
+
 std::string SphinxScript = "Sphinx: Behold, I am the Sphinx, guardian of this realm. To pass, answer my riddle true";
 Meet meetShpinx1(2);
 Meet meetShpinx2(2);
 HeartContainer fromSphinx;
 Milk milkfromSphinx;
-Sword fromfarmer;
+Sword fromfarmer(2);
 
 std::string FarmerScripts = "Traveler, I beseech thee! My daughter's trapped in the upper room, besieged by a fearsome beast. Can you aid her? I'll reward you with a lifesaver upon her safe return.";
 
@@ -16,6 +18,7 @@ Milk MilkfromChef;
 
 
 //NPC setup
+NPC::NPC() = default;
 NPC::NPC(string Name, string Script, int Money, vector<Item*> items): GameCharacter(Name, "NPC", 0, 0, 0, Money), script(Script){}
 void NPC::setScript(string Scripts){
     script = Scripts;

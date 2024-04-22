@@ -11,7 +11,6 @@
 #include "Player.h"
 
 using namespace std;
-
 /* This is the record system. Get the information of the  */
 /* player and rooms then save them to (a) file(s). Notice */
 /* that using pass by reference can prevent sending the   */

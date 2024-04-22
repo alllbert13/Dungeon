@@ -1,5 +1,5 @@
 #include "Room.h"
-
+#include "Item.h"
 Room::Room(){
     type = "empty";
     upRoom = NULL;
@@ -8,7 +8,7 @@ Room::Room(){
     rightRoom = NULL;
     isExit = true;
     index = -1;
-    objects = {0};
+    objects = {};
 }
 Room::Room(string Type, int Index, vector<Object*> Objects){
     type = Type;
@@ -17,7 +17,6 @@ Room::Room(string Type, int Index, vector<Object*> Objects){
 }
 
 void Room::ItemFall(Item* obj) {
-    // Implement this function according to your requirements
     objects.push_back(obj);
 }
 

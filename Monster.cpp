@@ -12,7 +12,7 @@ void Monster::defeated(Player* player){
     player->setMoney(player->getMoney() + this->getMoney());
     cout << "from " << this->getName() << "earn " << this->getMoney() << std::endl;
     for(int i = 0; i < commodity.size(); i++){
-        player->getCurrentRoom()->getObjects().push_back(dynamic_cast<Object*> (commodity[i]));
+        player->getCurrentRoom()->ItemFall(commodity[i]);
         cout << this->getName() << "drop a" << this->getCommodity()[i] << endl;
     }
     for(int i = 0; i < player->getCurrentRoom()->getObjects().size(); i++){
@@ -47,4 +47,8 @@ void Monster::takeItem(Player* player){
     else{
         defeated(player);
     }
+}
+
+vector<Item*> Monster::getCommodity(){
+    return commodity;
 }
