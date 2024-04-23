@@ -10,7 +10,7 @@ Player::Player(){
     hungry = 8;
     thirsty = 8;
     defense = 2;
-    attack = 3;
+    attack = 100;
     previousRoom = nullptr;
     money = 0;
     inventory = {};

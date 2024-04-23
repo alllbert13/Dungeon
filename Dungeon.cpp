@@ -23,9 +23,13 @@ void Dungeon::startGame(){
 void Dungeon::runDungeon(){
     Meet meet1(2);
     Sword frompig(2);
-    Monster pig("pig", 5, 1, 1, 2, {&meet1});
+    Monster pig("pig", 1, 1, 1, 1, {&meet1});
     Room room1("swamp", 1, {&pig, &frompig});  
-    rooms.push_back(room1); 
+    Room room2("swamp", 2, {&frompig});
+    room1.setUpRoom(&room2);
+    room2.setDownRoom(&room1);
+    rooms.push_back(room1);
+    rooms.push_back(room2); 
     player.setCurrentRoom(&room1);
     player.setInventory({&meet1});
     createPlayer();
@@ -59,6 +63,7 @@ void Dungeon::runDungeon(){
         else if(command <= player.getCurrentRoom()->getObjects().size() && command >= 1){
             player.getCurrentRoom()->getObjects()[command - 1]->takeItem(&player);
             player.getCurrentRoom()->getObjects().erase(player.getCurrentRoom()->getObjects().begin() + command - 1);
+            cout << "this" << endl;
             afterWork();
         }
         else{

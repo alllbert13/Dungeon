@@ -29,9 +29,9 @@ void Monster::takeItem(Player* player){
         std::cin >> command;
         if(command == 1){
             this->setCurrentHealth(this->getCurrentHealth() - (player->getfinalAttack() * ((10 - this->getDefense()) / 10)));
-            cout << "monster get damage " << (player->getAttack() * ((10 - this->getDefense()) / 10)) << endl;
+            cout << "monster get damage " << (player->getfinalAttack() * ((10 - this->getDefense()) / 10)) << endl;
             player->takeDamage(((10 - this->getAttack()) * player->getfinalDefense() / 10));
-            cout << "you got damage " << ((10 - this->getAttack()) * player->getDefense() / 10) << endl ;
+            cout << "you got damage " << ((10 - this->getAttack()) * player->getfinalDefense() / 10) << endl ;
             cout << "monster life: " << this->getCurrentHealth() << endl;
             cout << "your life: " << player->getCurrentHealth() << endl;
         }
