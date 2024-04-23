@@ -52,6 +52,7 @@ public:
 
     void endGame();
     void afterWork();
+    void checkStata();
 };
 
 

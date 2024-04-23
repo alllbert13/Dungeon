@@ -4,14 +4,13 @@
 #include "Monster.h"
 #include "Player.h"
 
-Dungeon::Dungeon() = default;
+Dungeon::Dungeon(){
+};
 void Dungeon::createPlayer(){
     std::cout << "player name: " ;
     string name;
     cin >> name;
-    Player* newPlayer = new Player();
-    newPlayer->setName(name);
-    player = *newPlayer;
+    player.setName(name);
 }
 void Dungeon::createMap(){
 
@@ -24,16 +23,15 @@ void Dungeon::startGame(){
 void Dungeon::runDungeon(){
     Meet meet1(2);
     Sword frompig(2);
-    Monster pig("pig", 5, 1, 1, 10, {&meet1});
+    Monster pig("pig", 5, 1, 1, 2, {&meet1});
     Room room1("swamp", 1, {&pig, &frompig});  
-    rooms.push_back(room1);
-    cout << "player name: ";
-    string Name;
-    cin >> Name;
-    cout << endl;
-    player = Player(Name);
+    rooms.push_back(room1); 
+    player.setCurrentRoom(&room1);
+    player.setInventory({&meet1});
+    createPlayer();
     int command;
     while(checkGameLogic()){
+        checkStata();
         int length = player.getCurrentRoom()->getObjects().size();
         showCommand();
         std::cin >> command;
@@ -81,14 +79,14 @@ void Dungeon::showCommand(){
     int length = player.getCurrentRoom()->getObjects().size();
     for(int i = 0; i < length; i++){
         player.getCurrentRoom()->getObjects()[i]->presentItem();
-        std::cout << i << std::endl;
+        std::cout << " " << i + 1 << std::endl;
     }
-    cout << "show states" << length + 1 << std::endl;
-    cout << "check bag" << length + 2 << std::endl;
-    cout << "forward" << length + 3 << std::endl;
-    cout << "backward" << length + 4 << std::endl;
-    cout << "go left" << length + 5 << std::endl;
-    cout << "go right" << length + 6 << std::endl;
+    cout << "show states " << length + 1 << std::endl;
+    cout << "check bag " << length + 2 << std::endl;
+    cout << "forward " << length + 3 << std::endl;
+    cout << "backward " << length + 4 << std::endl;
+    cout << "go left " << length + 5 << std::endl;
+    cout << "go right " << length + 6 << std::endl;
 }
 
 bool Dungeon::checkGameLogic(){
@@ -103,17 +101,44 @@ bool Dungeon::checkGameLogic(){
 
 void Dungeon::afterWork(){
     if(player.getThirsty() <= 0 || player.getHungry() <= 0){
-        player.setCurrentHealth(player.getCurrentHealth() - 1);
+        player.takeDamage(1);
+        if(player.getThirsty() <= 0 && player.getHungry() <= 0){
+        }
+        else if(player.getThirsty() <= 0 && player.getHungry() > 0){
+            player.setHungry(player.getHungry() - 1);
+            cout << "you got 1 damage because you're thirsty" << endl;
+        }
+        else if(player.getThirsty() > 0 && player.getHungry() <= 0){
+            if(player.getThirst()){
+                if(player.getThirsty() == 1)
+                    player.setThirsty(0);
+                else{
+                    player.setThirsty(player.getThirsty() - 2);
+                }
+            }
+            else{
+                player.setThirsty(player.getThirsty() - 1);
+            }
+            cout << "you got 1 damage because you're hungry" << endl;
+        }
+        if(player.getPoison()){
+            cout << "you are poisoned " << endl << "you got 1 damage" << endl;
+        }
+        return;
     }
-    player.setCurrentHealth(player.getCurrentHealth() - 1);
-    player.setHungry(player.getHungry() - 1);
-    player.setThirsty(player.getThirsty() - 1);
-    if(player.getThirst()){
+    else{
+        player.setHungry(player.getHungry() - 1);
         player.setThirsty(player.getThirsty() - 1);
+        if(player.getThirst()){
+            player.setThirsty(player.getThirsty() - 1);
+        }
+        if(player.getPoison()){
+            player.takeDamage(1);
+        }
     }
-    if(player.getPoison()){
-        player.setCurrentHealth(player.getCurrentHealth() - 1); 
-    }
+}
+
+void Dungeon::checkStata(){
     if(player.getCurrentHealth() <= 2){
         cout << "your life: " << player.getCurrentHealth() << endl; 
     }

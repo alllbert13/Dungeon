@@ -4,7 +4,7 @@
 Item::Item():Object("empty", "empty"){}
 Item::Item(std::string Name): Object(Name, "Item"){}
 void Item::presentItem(){
-    std::cout << "pick up" << this->getName() << std::endl;
+    std::cout << "pick up " << this->getName();
 }
 
 void Item::takeItem(Player* player){
@@ -12,8 +12,8 @@ void Item::takeItem(Player* player){
         std::cout << "your beg is full" << std::endl;
     }
     else{
-        player->getInventory().push_back(dynamic_cast<Item*> (this));
-        std::cout << "add " << this->getName() << "to your bag" << std::endl;
+        player->getInventory().push_back(this);
+        std::cout << "add " << this->getName() << " to your bag" << endl << endl;
     }
 }
 Meet::Meet(int Hungry):Item("meet"), hungry(Hungry){}

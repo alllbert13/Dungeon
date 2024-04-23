@@ -2,10 +2,10 @@
 #include "Item.h"
 Room::Room(){
     type = "empty";
-    upRoom = NULL;
-    downRoom = NULL;
-    leftRoom = NULL;
-    rightRoom = NULL;
+    upRoom = nullptr;
+    downRoom = nullptr;
+    leftRoom = nullptr;
+    rightRoom = nullptr;
     isExit = true;
     index = -1;
     objects = {};
@@ -14,6 +14,11 @@ Room::Room(string Type, int Index, vector<Object*> Objects){
     type = Type;
     index = Index;
     objects = Objects;
+    upRoom = nullptr;
+    downRoom = nullptr;
+    leftRoom = nullptr;
+    rightRoom = nullptr;
+    isExit = true;
 }
 
 void Room::ItemFall(Item* obj) {
