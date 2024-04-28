@@ -2,15 +2,16 @@
 #include "Item.h"
 #include "Monster.h"
 #include "NPC.h"
+#include <random>
 
 
 Player::Player(){
-    maxHealth = 10;
-    currentHealth = 10;
-    hungry = 8;
-    thirsty = 8;
+    maxHealth = 30;
+    currentHealth = 30;
+    hungry = 30;
+    thirsty = 30;
     defense = 2;
-    attack = 100;
+    attack = 5;
     previousRoom = nullptr;
     money = 0;
     inventory = {};
@@ -19,14 +20,15 @@ Player::Player(){
     sword = nullptr;
     armor = nullptr;
     head = 0;
+    hunger = false;
 };
 
 Player::Player(string Name){
     name = Name;
-    maxHealth = 10;
-    currentHealth = 10;
-    hungry = 8;
-    thirsty = 8;
+    maxHealth = 30;
+    currentHealth = 30;
+    hungry = 30;
+    thirsty = 30;
     defense = 2;
     attack = 3;
     previousRoom = nullptr;
@@ -37,6 +39,7 @@ Player::Player(string Name){
     sword = nullptr;
     armor = nullptr;
     head = 0;
+    hunger = false;
 }
 void Player::addItem(Item* newItem){
     if(inventory.size() >= 12){
@@ -65,7 +68,11 @@ int Player::gethead(){
     return head;
 }
 void Player::sethead(){
-    head++;
+    for(int i = 0; i < currentRoom->getObjects().size(); i++){
+        if(currentRoom->getObjects()[i]->getTag() == "monster" || currentRoom->getObjects()[i]->getTag() == "NPC")
+        return;
+    }
+    head ++;
 }
 void Player::setPoison(bool istrue){
     poison = istrue;
@@ -97,45 +104,19 @@ void Player::pickupItem(Item* item){
 void Player::setSword(Sword* Sword){
     if(sword == nullptr){
         sword = Sword;
-        for(int i = 0; i < inventory.size(); i++){
-            if(inventory[i]->getName() == "sword"){
-                inventory.erase(inventory.begin() + i);
-                return;              
-            }
-        }
     }
     else{
-        inventory.push_back(sword);
         sword = Sword;
-        for(int i = 0; i < inventory.size(); i++){
-            if(inventory[i] == Sword){
-                inventory.erase(inventory.begin() + i);
-                return;
-            }
-        }
     }
 }
 
 void Player::setArmor(Armor* Armor){
     if(armor == nullptr){
         armor = Armor;
-        for(int i = 0; i < inventory.size(); i++){
-            if(inventory[i] == Armor){
-                inventory.erase(inventory.begin() + i);
-                return;
-            }
-        }
     }
     
     else{
-        inventory.push_back(armor);
         armor = Armor;
-        for(int i = 0; i < inventory.size(); i++){
-            if(inventory[i] == Armor){
-                inventory.erase(inventory.begin() + i);
-                return;
-            }
-        }
     }
 }
 
@@ -161,6 +142,7 @@ void Player::checkBag(){
         if(command == -1){
             return;
         }
+        // invalid
         else if(command >= inventory.size() + 3 || command == 0 || command <= -2){
             std::cout << "invalid input" << std::endl;
         }
@@ -186,7 +168,7 @@ void Player::checkBag(){
             }
             else{
                 inventory.push_back(sword);
-                this->setSword(nullptr);
+                sword = nullptr;
             }
         }
         else if(command == inventory.size() + 2){
@@ -211,9 +193,10 @@ void Player::checkBag(){
             }
             else{
                 inventory.push_back(armor);
-                this->setArmor(nullptr);
+                armor = nullptr;
             }
         }
+        // use item
         else{
             std::cout << "use 1" << std::endl << "delete 2" << std::endl;
             int command2 = -1;
@@ -232,28 +215,30 @@ void Player::checkBag(){
                 }
             }
         }
-    if(inventory.size() == 0){
-        cout << "your bag is empty" << endl;
-    }
-    else{
-        for(int i = 0; i < inventory.size(); i++){
-            std::cout << inventory[i]->getName() << " " << i + 1 << std::endl;
+        if(inventory.size() == 0){
+            cout << "your bag is empty" << endl;
         }
-    }
-    cout << endl;
-    string swordName = (sword == nullptr) ? "empty" : sword->getName();
-    string aromorName = (armor == nullptr) ? "empty" : armor->getName();
-    cout << "sword: " << swordName << " " << inventory.size() + 1 <<endl;
-    cout << "armor: " << aromorName << " " << inventory.size() + 2 << endl << endl;
-    std::cout << "-1 to quit" << std::endl;
+        else{
+            for(int i = 0; i < inventory.size(); i++){
+                std::cout << inventory[i]->getName() << " " << i + 1 << std::endl;
+            }
+        }
+        cout << endl;
+        string swordName = (sword == nullptr) ? "empty" : sword->getName();
+        string aromorName = (armor == nullptr) ? "empty" : armor->getName();
+        cout << "sword: " << swordName << " " << inventory.size() + 1 <<endl;
+        cout << "armor: " << aromorName << " " << inventory.size() + 2 << endl << endl;
+        std::cout << "-1 to quit" << std::endl;
 
     }  
 }
 
 void Player::showStates(){
+    cout << endl << endl << endl;
     cout << "name: " << this->getName() << std::endl;
-    cout << "attack value: " << this->getAttack() << std::endl;
-    cout << "defence value: " << this->getDefense() << std::endl;
+    cout << "money: " << this->getMoney() << endl;
+    cout << "attack value: " << this->getfinalAttack() << std::endl;
+    cout << "defence value: " << this->getfinalDefense() << std::endl;
     cout << "current health: " << this->getCurrentHealth() << std::endl;
     cout << "max health: " << this->getMaxHealth() << std::endl;
     cout << "current room: " << this->getCurrentRoom()->getIndex() << " "  << this->getCurrentRoom()->getType() << std::endl;
@@ -270,7 +255,9 @@ void Player::showStates(){
     cout << "thirsty: " << this->getThirsty() << endl; 
     string poisonornot = (poison)? "yes" : "no";
     string Thirstornot = (Thirst)? "yes" : "no";
+    string huornot = (hunger)? "yes" : "no";
     cout << "poison: " << poisonornot << std::endl;
+    cout << "hunger: " << huornot << endl; 
     cout << "thirsty: " << Thirstornot << endl;
     cout << "room compeleted: " << head << std::endl;
 }
@@ -318,7 +305,7 @@ Room* Player::getPreviousRoom() {
     return previousRoom;
 }
 
-vector<Item*> Player::getInventory() {
+vector<Item*>& Player::getInventory() {
     return inventory;
 }
 
@@ -326,6 +313,10 @@ vector<Item*> Player::getInventory() {
 void Player::forward() {
     if(currentRoom->getUpRoom() == nullptr){
         cout << "you cannot go up" << endl;
+        return;
+    }
+    if(currentRoom->getUpRoom()->getIndex() == 8 && head < 6){
+        cout << "you cannot challenge boss before you complete all room " << endl;
         return;
     }
     else{
@@ -340,6 +331,10 @@ void Player::back() {
         cout << "you cannot go down" << endl;
         return;
     }
+    if(currentRoom->getDownRoom()->getIndex() == 8 && head < 6){
+        cout << "you cannot challenge boss before you complete all room " << endl;
+        return;
+    }
     else{
         previousRoom = currentRoom;
         currentRoom = currentRoom->getDownRoom();
@@ -352,6 +347,10 @@ void Player::right() {
         cout << "you cannot go right" << endl;
         return;
     }
+    if(currentRoom->getRightRoom()->getIndex() == 8 && head < 6){
+        cout << "you cannot challenge boss before you complete all room " << endl;
+        return;
+    }
     else{
         previousRoom = currentRoom;
         currentRoom = currentRoom->getRightRoom();
@@ -362,6 +361,10 @@ void Player::right() {
 void Player::left() {
     if(currentRoom->getLeftRoom() == nullptr){
         cout << "you cannot go left" << endl;
+        return;
+    }
+    if(currentRoom->getLeftRoom()->getIndex() == 8 && head < 6){
+        cout << "you cannot challenge boss before you complete all room " << endl;
         return;
     }
     else{
@@ -382,12 +385,71 @@ void Player::gopre(){
     roomCheck();
 }
 
+void Player::setHunger(bool h){
+    hunger = h;
+}
+
+bool Player::getHunger(){
+    return hunger;
+}
 void Player::roomCheck(){
     if(currentRoom->getType() == "swamp"){
         poison = true;
+        cout << "you're in swamp, you are poisoned" << endl;
     }
     else if(currentRoom->getType() == "desert"){
-        Thirst = true;
+        random_device rd;
+        mt19937 gen(rd());
+        
+        // Define probabilities for each number
+        double probabilities[] = {0.60, 0.20, 0.20};
+        
+        // Define the custom distribution
+        discrete_distribution<> dis({probabilities[0], probabilities[1], probabilities[2]});
+
+        int random_number = dis(gen) + 1; // Adding 1 to get numbers from 1 to 3
+        if(random_number == 1){
+            Thirst = true;
+            cout << "you're in desert, your thirsty status drop dramatically";
+        }
+        if(random_number == 2){
+            Thirst = true;
+            hunger = true;
+            cout << "you're in desert" << endl << "you encouter a standstorm" << endl;
+            cout << "your thirsty and hunger status drop dramatically" << endl;
+        }
+        if(random_number == 3){
+            cout << "you stumble upon an oasis in the desert, replenish your thirst status" << endl;
+            thirsty = 30;
+        }
+    }
+    else if(currentRoom->getType() == "forest"){
+        random_device rd;
+        mt19937 gen(rd());
+
+        // Define probabilities for each number
+        double probabilities[] = {0.70, 0.30};
+
+        // Define the custom distribution
+        discrete_distribution<> dis({probabilities[0], probabilities[1]});
+
+        // Generate random number
+        int random_number = dis(gen) + 1; // Adding 1 to get numbers from 1 to 2
+        if(random_number == 1){
+            cout << "you're in forest, your thirsty and hunger status drop dramatically" << endl;
+            hunger = true;
+        }
+        else if(random_number == 2){
+            cout << "you stumble upon a lake in the forest, replenish your thirst status" << endl;
+            thirsty = 30;
+        }
+        hunger = true;
+    }
+    if(currentRoom->getType() != "desert"){
+        Thirst = false;
+    }
+    if(currentRoom->getType() != "forest"){
+        hunger = false;
     }
 }
 

@@ -41,7 +41,7 @@ public:
     void setType(string Type){
         type = Type;
     }
-    vector<Object*> getObjects();
+    vector<Object*>& getObjects();
     Room* getUpRoom();
     Room* getDownRoom();
     Room* getLeftRoom();

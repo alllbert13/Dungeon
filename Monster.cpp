@@ -1,6 +1,6 @@
 #include "Monster.h"
 
-Monster::Monster(): GameCharacter("empty", "monster", 0, 0, 0, 0), commodity(0){}
+Monster::Monster(): GameCharacter("empty", "monster", 0, 0, 0, 0), commodity({}){}
 Monster::Monster(string Name, int maxHealth, int Attack, int Defense, int Money, vector<Item*> Commodity): GameCharacter(Name, "monster", maxHealth, Attack, Defense, Money), commodity(Commodity){}
 void Monster::presentItem(){
     std::cout << "fight against " << this->getName();
@@ -10,10 +10,10 @@ void Monster::setCommodity(vector<Item*> Items){
 }
 void Monster::defeated(Player* player){
     player->setMoney(player->getMoney() + this->getMoney());
-    cout << "from " << this->getName() << "earn " << this->getMoney() << std::endl;
+    cout << "from " << this->getName() << " earn " << this->getMoney() << " dollar" << std::endl;
     for(int i = 0; i < commodity.size(); i++){
         player->getCurrentRoom()->ItemFall(commodity[i]);
-        cout << this->getName() << "drop a" << this->getCommodity()[i] << endl;
+        cout << this->getName() << " drop a " << this->getCommodity()[i]->getName() << endl;
     }
     for(int i = 0; i < player->getCurrentRoom()->getObjects().size(); i++){
         if(player->getCurrentRoom()->getObjects()[i]->getName() == this->getName()){
@@ -28,25 +28,71 @@ void Monster::takeItem(Player* player){
         int command;
         std::cin >> command;
         if(command == 1){
-            this->setCurrentHealth(this->getCurrentHealth() - (player->getfinalAttack() * ((10 - this->getDefense()) / 10)));
-            cout << "monster get damage " << (player->getfinalAttack() * ((10 - this->getDefense()) / 10)) << endl;
-            player->takeDamage(((10 - this->getAttack()) * player->getfinalDefense() / 10));
-            cout << "you got damage " << ((10 - this->getAttack()) * player->getfinalDefense() / 10) << endl ;
+            int playerDamage = player->getfinalAttack() > this->getDefense() ? player->getfinalAttack() + 1 :  player->getfinalAttack() - 1;
+            int monsterDamage = this->getAttack() > player->getfinalDefense() ? this->getAttack() + 1 : this->getAttack() - 1;
+            this->setCurrentHealth(this->getCurrentHealth() - playerDamage);
+            cout << "monster get damage " << playerDamage << endl;
+            player->takeDamage(monsterDamage);
+            cout << "you got damage " << monsterDamage << endl ;
             cout << "monster life: " << this->getCurrentHealth() << endl;
             cout << "your life: " << player->getCurrentHealth() << endl;
+            if(player->getPoison()){
+                player->takeDamage(1);
+            }
         }
         else if(command == 2){
+            //double free or corruption
             player->gopre();
             break;
         }
         else{
             std::cout << "invalid input" << endl;
         }
+        cout << endl;
     }
     if(player->getCurrentHealth() <= 0){
     }
-    else{
+    else if(this->getCurrentHealth() <= 0){
         defeated(player);
+    }
+    //after work
+        if(player->getThirsty() <= 0 || player->getHungry() <= 0){
+        player->takeDamage(1);
+        if(player->getThirsty() <= 0 && player->getHungry() <= 0){
+            cout << "you got 1 damage because you're thirsty and hungry" << endl;
+        }
+        else if(player->getThirsty() <= 0 && player->getHungry() > 0){
+            player->setHungry(player->getHungry() - 1);
+            cout << "you got 1 damage because you're thirsty" << endl;
+        }
+        else if(player->getThirsty() > 0 && player->getHungry() <= 0){
+            if(player->getThirst()){
+                if(player->getThirsty() == 1)
+                    player->setThirsty(0);
+                else{
+                    player->setThirsty(player->getThirsty() - 2);
+                }
+            }
+            else{
+                player->setThirsty(player->getThirsty() - 1);
+            }
+            cout << "you got 1 damage because you're hungry" << endl;
+        }
+        if(player->getPoison()){
+            cout << "you are poisoned " << endl << "you got 1 damage" << endl;
+        }
+        return;
+    }
+    else{
+        player->setHungry(player->getHungry() - 1);
+        player->setThirsty(player->getThirsty() - 1);
+        if(player->getThirst() && player->getThirsty() > 0){
+            player->setThirsty(player->getThirsty() - 1);
+        }
+        if(player->getPoison()){
+            player->takeDamage(1);
+            cout << "you get 1 damage because you are poinsoned" << endl;
+        }
     }
 }
 

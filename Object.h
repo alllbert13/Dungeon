@@ -17,7 +17,7 @@ private:
 public:
     Object();
     Object(string,string);
-
+    // Object(const Object& other);
     /* pure virtual function */
     virtual void presentItem() = 0;
     virtual void takeItem(Player*) = 0;

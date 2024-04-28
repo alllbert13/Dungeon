@@ -2,10 +2,15 @@
 #include "Player.h"
 
 Item::Item():Object("empty", "empty"){}
-Item::Item(std::string Name): Object(Name, "Item"){}
+Item::Item(std::string Name, int Price): Object(Name, "Item"), price(Price){}
 void Item::presentItem(){
     std::cout << "pick up " << this->getName();
 }
+
+int Item::getPrice(){
+    return price;
+}
+// Item::Item(const Item& other) : Object(other) {}
 
 void Item::takeItem(Player* player){
     if(player->getInventory().size() >= 12){
@@ -14,9 +19,30 @@ void Item::takeItem(Player* player){
     else{
         player->getInventory().push_back(this);
         std::cout << "add " << this->getName() << " to your bag" << endl << endl;
+        int position;
+        // for(int i = 0; i < player->getCurrentRoom()->getObjects().size(); i++){
+        //     if(player->getCurrentRoom()->getObjects()[i]->getName() == this->getName()){
+        //         position = i;
+        //         break;
+        //     }
+        // }
+        // player->getCurrentRoom()->getObjects().erase(player->getCurrentRoom()->getObjects().begin() + position);
+
+        int objectIndexToRemove = -1;
+        for (int i = 0; i < player->getCurrentRoom()->getObjects().size(); i++) {
+            if (player->getCurrentRoom()->getObjects()[i]->getName() == this->getName()) {
+                objectIndexToRemove = i;
+                break;
+            }
+        }
+
+        // 如果找到了要删除的对象的索引，则从房间对象列表中删除对象
+        if(objectIndexToRemove != -1) {
+            player->getCurrentRoom()->getObjects().erase(player->getCurrentRoom()->getObjects().begin() + objectIndexToRemove);
+        }
     }
 }
-Meet::Meet(int Hungry):Item("meet"), hungry(Hungry){}
+Meet::Meet(int Hungry):Item("paddy", 15), hungry(Hungry){}
 int Meet::getHungry(){
     return hungry;
 };
@@ -24,17 +50,17 @@ void Meet::setHungry(int Hungry){
     hungry = Hungry;
 }
 void Meet::useItem(Player* player){
-    if(8 - player->getHungry() >= hungry){
+    if(30 - player->getHungry() >= hungry){
         player->setHungry(player->getHungry() + hungry);
     }
     else{
-        player->setHungry(8);
+        player->setHungry(30);
     }
 }
 
 
 
-LifePotion::LifePotion(int Healthy): Item("lifePotion"), health(Healthy){};
+LifePotion::LifePotion(int Healthy): Item("lifePotion", 20), health(Healthy){};
 int LifePotion::getHealth(){
     return health;
 }
@@ -49,7 +75,7 @@ void LifePotion::useItem(Player* player){
         player->setCurrentHealth(player->getMaxHealth());
     }
 }
-Sword::Sword(int atk): Item("sword"), attack(atk) {}
+Sword::Sword(int atk): Item("sword", 50), attack(atk) {}
 
 void Sword::setAttack(int atk){
     attack = atk;
@@ -59,9 +85,9 @@ int Sword::getAttack(){
     return attack;
 }
 
-Sword::Sword(){}
+Sword::Sword():Item("sword", 50){}
 
-Armor::Armor(){}
+Armor::Armor():Item("armor", 50){}
 
 void Sword::useItem(Player* player){
     if(player == nullptr) {
@@ -84,7 +110,7 @@ void Sword::remove(Player* player){
     player->setSword(nullptr);
 }
 
-Armor::Armor(int def): Item("Armor"), defense(def) {}
+Armor::Armor(int def): Item("armor", 50), defense(def) {}
 
 void Armor::setDefense(int def){
     defense = def;
@@ -115,12 +141,12 @@ void Armor::remove(Player* player){
     player->setArmor(nullptr);
 }
 
-HeartContainer::HeartContainer():Item("heartContainer"){}
+HeartContainer::HeartContainer():Item("heartContainer", 70){}
 void HeartContainer::useItem(Player* player){
     player->setMaxHealth(player->getMaxHealth() + 1);
 }
 
-Milk::Milk():Item("Milk"){}
+Milk::Milk():Item("Milk", 50){}
 void Milk::useItem(Player* player){
     if(!player->getPoison()){
         std::cout << "you didn't get poisoned, cannot use milk" << std::endl;
@@ -130,11 +156,24 @@ void Milk::useItem(Player* player){
     }
 }
 
+WaterBolt::WaterBolt(int value): Item("waterbolt", 15){};
 void WaterBolt::useItem(Player* player){
-    if(8 - player->getThirsty() >= 2){
+    if(30 - player->getThirsty() >= 2){
         player->setThirsty(player->getThirsty() + 2);       
     }
     else{
-        player->setThirsty(8);
+        player->setThirsty(30);
+    }
+}
+animalMeat::animalMeat(): Item("animal meat", 20){}
+void animalMeat::useItem(Player* player){
+    cout << "replenish hungry status" << endl;
+    cout << "add 5 life" << endl;
+    player->setHungry(30);
+    if(player->getCurrentHealth() <= player->getMaxHealth() - 5){
+        player->setCurrentHealth(player->getCurrentHealth() + 5);
+    }
+    else{
+        player->setCurrentHealth(player->getMaxHealth());
     }
 }

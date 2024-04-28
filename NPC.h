@@ -29,7 +29,7 @@ public:
     void itemChange(Player*);
     void presentItem();
     string getScript();
-    vector<Item*> getCommodity();
+    vector<Item*>& getCommodity();
 };
 
 class Sphinx: public NPC
@@ -50,6 +50,26 @@ class chef: public NPC
 {
 public:
     chef();
+    void takeItem(Player* player);
+};
+
+class Guide: public NPC
+{
+public:
+    Guide();
+    void takeItem(Player* player);
+};
+
+class clerk: public NPC
+{
+public:
+    clerk();
+    void takeItem(Player* player);
+};
+
+class Boss: public NPC{
+public:
+    Boss();
     void takeItem(Player* player);
 };
 

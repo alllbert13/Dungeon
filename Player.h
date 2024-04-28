@@ -33,7 +33,10 @@ private:
     Sword* sword;
     Armor* armor;
     int head;
+    bool hunger;
 public:
+    bool getHunger();
+    void setHunger(bool);
     bool checkIsDead();
     void takeDamage(int);
     void setMaxHealth(int);
@@ -78,7 +81,7 @@ public:
     void setInventory(vector<Item*>);
     Room* getCurrentRoom();
     Room* getPreviousRoom();
-    vector<Item*> getInventory();
+    vector<Item*>& getInventory();
     void takeItem(Player*);
     void presentItem();
     void showStates();
@@ -91,6 +94,7 @@ public:
     void roomCheck();
     int getfinalAttack();
     int getfinalDefense();
+    bool bossCheck();
 };
 
 #endif //PLAYER_H_INCLUDED

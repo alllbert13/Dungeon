@@ -57,7 +57,7 @@ int Room::getIndex() {
     return index;
 }
 
-vector<Object*> Room::getObjects() {
+vector<Object*>& Room::getObjects() {
     return objects;
 }
 
@@ -75,4 +75,9 @@ Room* Room::getLeftRoom() {
 
 Room* Room::getRightRoom() {
     return rightRoom;
+}
+
+
+void Room::setObjects(vector<Object*> newlist){
+    objects = newlist;
 }

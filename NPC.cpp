@@ -3,12 +3,12 @@
 #include "Room.h"
 #include "Player.h"
 
-std::string SphinxScript = "Sphinx: Behold, I am the Sphinx, guardian of this realm. To pass, answer my riddle true";
-Meet meetShpinx1(2);
-Meet meetShpinx2(2);
-HeartContainer fromSphinx;
-Milk milkfromSphinx;
-Sword fromfarmer(2);
+
+Meet* meetShpinx1 = new Meet(2);
+Meet* meetShpinx2 = new Meet(2);
+HeartContainer* fromSphinx = new HeartContainer();
+Milk* milkfromSphinx = new Milk();
+Sword* fromfarmer = new Sword(2);
 
 std::string FarmerScripts = "Traveler, I beseech thee! My daughter's trapped in the upper room, besieged by a fearsome beast. Can you aid her? I'll reward you with a lifesaver upon her safe return.";
 
@@ -19,7 +19,7 @@ Milk MilkfromChef;
 
 //NPC setup
 NPC::NPC() = default;
-NPC::NPC(string Name, string Script, int Money, vector<Item*> items): GameCharacter(Name, "NPC", 0, 0, 0, Money), script(Script){}
+NPC::NPC(string Name, string Script, int Money, vector<Item*> items): GameCharacter(Name, "NPC", 15, 6, 8, Money), script(Script){}
 void NPC::setScript(string Scripts){
     script = Scripts;
 }
@@ -29,24 +29,24 @@ void NPC::setCommodity(vector<Item*> items){
 string NPC::getScript(){
     return script;
 }
-vector<Item*> NPC::getCommodity(){
+vector<Item*>& NPC::getCommodity(){
     return commodity;
 }
 void NPC::presentItem(){
-    std::cout << "talk to " << this->getName() << std::endl;
+    std::cout << "talk to " << this->getName();
 }
 
 
 //sphinx setup
-Sphinx::Sphinx():NPC("Sphinx", SphinxScript, 10, {&meetShpinx1, &meetShpinx2, &milkfromSphinx, &fromSphinx}) {}
+Sphinx::Sphinx():NPC("Sphinx", "Sphinx: Behold, I am the Sphinx, guardian of this realm. To pass, answer my riddle true", 10, {}) {}
 
 void Sphinx::takeItem(Player*player){
-    cout << SphinxScript << std::endl;
+    cout << "Sphinx: Behold, I am the Sphinx, guardian of this realm. To pass, answer my riddle true" << std::endl;
     cout << "would you take the challenge Y/n" << std::endl;
     std::string respon;
     cin >> respon;
     if(respon == "Y"){
-        cout << "What is the smallest postitive number that" << std::endl << "x = 2 mod 3" << std::endl << "x = 3 mod 5" << std::endl << "x = 5 mod 7";
+        cout << "What is the smallest postitive number that" << std::endl << "x = 2 mod 3" << std::endl << "x = 3 mod 5" << std::endl << "x = 5 mod 7" << endl;
         std::string ans;
         cin >> ans;
         int times = 0;
@@ -57,12 +57,13 @@ void Sphinx::takeItem(Player*player){
             }
             //the answer is correct
             if(ans == "23"){
+                cout << "Correct! " << endl;
                 player->setMoney(player->getMoney() + 10);
                 std::cout << "you earn 10 dollors from Sphinx" << std::endl;
-                cout << "Correct!" << std::endl << "accept reward" << std::endl;
+                cout << "accept reward" << std::endl;
                 //take the item
-                for(int i = 0; i < 4; i++){
-                    cout << this->getCommodity()[i]->getName() <<"from Sphinx";
+                for(int i = 0; i < this->getCommodity().size(); i++){
+                    cout << this->getCommodity()[i]->getName() <<" from Sphinx.";
                     //cannot take
                     if(player->getInventory().size() >= 12){
                         cout << "your bag is full";
@@ -70,7 +71,7 @@ void Sphinx::takeItem(Player*player){
                     }
                     //take
                     else{
-                        cout << "would you take the item Y/n" << std::endl;
+                        cout << " would you take the item Y/n" << std::endl;
                         std::string takeornot;
                         while(cin >> takeornot){
                             if(takeornot == "Y"){
@@ -113,7 +114,7 @@ void Sphinx::takeItem(Player*player){
 }
 
 //farmer setup
-farmer::farmer():NPC("Famer", FarmerScripts, 4, {&fromfarmer}){}
+farmer::farmer():NPC("Famer", FarmerScripts, 4, {}){}
 
 void farmer::takeItem(Player* player){
     std::cout << FarmerScripts << std::endl;
@@ -131,7 +132,7 @@ void farmer::takeItem(Player* player){
         player->setMoney(player->getMoney() + 4);
         if(player->getInventory().size() >= 12){
             std::cout << "your bag is full" << std::endl;
-            player->getCurrentRoom()->ItemFall(&fromfarmer);
+            player->getCurrentRoom()->ItemFall(fromfarmer);
             for(int i = 0; i < player->getCurrentRoom()->getObjects().size(); i++){
                 if(player->getCurrentRoom()->getObjects()[i] == this){
                     player->getCurrentRoom()->getObjects().erase(player->getCurrentRoom()->getObjects().begin() + i);
@@ -141,24 +142,24 @@ void farmer::takeItem(Player* player){
         else{
             cout << "would you take the sword Y/n";
             string ans;
-            cin >> ans;
             while(cin >> ans){
                 if(ans == "Y"){
-                    player->pickupItem(&fromfarmer);
+                    player->getInventory().push_back(this->getCommodity()[0]);
+                    cout << "you get sword from farmer" << endl;
                     for(int i = 0; i < player->getCurrentRoom()->getObjects().size(); i++){
                         if(player->getCurrentRoom()->getObjects()[i] == this){
-                         player->getCurrentRoom()->getObjects().erase(player->getCurrentRoom()->getObjects().begin() + i);
+                            player->getCurrentRoom()->getObjects().erase(player->getCurrentRoom()->getObjects().begin() + i);
                         }
                     }
                     break;
                 }
                 else if(ans == "n"){
-                    player->getCurrentRoom()->ItemFall(&fromfarmer);
+                    player->getCurrentRoom()->ItemFall(this->getCommodity()[0]);
                     for(int i = 0; i < player->getCurrentRoom()->getObjects().size(); i++){
-                    if(player->getCurrentRoom()->getObjects()[i] == this){
-                        player->getCurrentRoom()->getObjects().erase(player->getCurrentRoom()->getObjects().begin() + i);
+                        if(player->getCurrentRoom()->getObjects()[i] == this){
+                            player->getCurrentRoom()->getObjects().erase(player->getCurrentRoom()->getObjects().begin() + i);
+                        }
                     }
-            }
                     break;
                 }
                 else{
@@ -170,7 +171,7 @@ void farmer::takeItem(Player* player){
     }
 }
 
-chef::chef(): NPC("Chef", ChefScripst, 8, {&MilkfromChef, &SwordfromChef}){}
+chef::chef(): NPC("Chef", ChefScripst, 8, {}){}
 void chef::takeItem(Player* player){
     cout << ChefScripst << std::endl;
     bool istrue = false;
@@ -185,8 +186,8 @@ void chef::takeItem(Player* player){
         cout << "Here are the award" << std::endl;
         std::cout << "you earn 8 dollors from chef" << std::endl;
         player->setMoney(player->getMoney() + 8);
-        for(int i = 0; i < 2; i++){
-            cout << this->getCommodity()[i]->getName() <<"from chef";
+        for(int i = 0; i < this->getCommodity().size(); i++){
+            cout << this->getCommodity()[i]->getName() <<" from chef";
             //cannot take
             if(player->getInventory().size() >= 12){
                 cout << "your bag is full";
@@ -195,7 +196,7 @@ void chef::takeItem(Player* player){
             }
             //take
             else{
-                cout << "would you take the item Y/n" << std::endl;
+                cout << " would you take the item Y/n" << std::endl;
                 std::string takeornot;
                 while(cin >> takeornot){
                     if(takeornot == "Y"){
@@ -203,8 +204,7 @@ void chef::takeItem(Player* player){
                         break;
                     }
                     else if(takeornot == "n"){
-                        Object* ptr = dynamic_cast<Item*>(this->getCommodity()[i]);
-                        player->getCurrentRoom()->getObjects().push_back(ptr);
+                        player->getCurrentRoom()->getObjects().push_back(this->getCommodity()[i]);
                         break;
                     }
                     else{
@@ -212,12 +212,92 @@ void chef::takeItem(Player* player){
                     }
                 }              
             }
-         }
+        }
         for(int i = 0; i < player->getCurrentRoom()->getObjects().size(); i++){
             if(player->getCurrentRoom()->getObjects()[i] == this){
                  player->getCurrentRoom()->getObjects().erase(player->getCurrentRoom()->getObjects().begin() + i);
             }
         }
+        player->sethead();
+    }
+}
+
+Guide::Guide(): NPC("Guide", "Guide: Welcome to the dungeon! Defeat monsters, help residents, and conquer six rooms to win. But watch out! Your life decreases with each hit, and hunger or thirst weakens your attacks. Find items to boost abilities and visit the shop in the third room for supplies. Good luck!", 0, {}){}
+
+void Guide::takeItem(Player* player){
+    cout << this->getScript() << endl;
+}
+
+clerk::clerk(): NPC("clerk", "Welcome! I'm Alllbert. Here's what we've got: ", 0, {}){}
+
+void clerk::takeItem(Player* player){
+    if(this->getCommodity().size() == 0){
+        cout << "everything is sold out." << endl;
+        return;
+    }
+    for(int i = 0; i < this->getCommodity().size(); i++){
+        cout << "Name: " << this->getCommodity()[i]->getName() << " Price: " << this->getCommodity()[i]->getPrice()<< "         " << i + 1 << endl;
+    }
+    cout << "your money: " << player->getMoney() << endl;
+    cout << "-1 to quit" << endl;
+    int ans;
+    while(cin >> ans){
+        if(ans == -1){
+            return;
+        }
+        if(ans >= 1 && ans <= this->getCommodity().size()){
+            if(player->getInventory().size() >= 12){
+                cout << "your bag is full" << endl;
+                return;
+            }
+            if(player->getMoney() < this->getCommodity()[ans - 1]->getPrice()){
+                cout << "you are so poor, get more money. " << endl;
+                return;
+            }
+            player->getInventory().push_back(this->getCommodity()[ans - 1]);
+            player->setMoney(player->getMoney() - this->getCommodity()[ans - 1]->getPrice());
+            cout << "add " << this->getCommodity()[ans - 1]->getName() << " to your bag" << endl;
+            this->getCommodity().erase(this->getCommodity().begin() + ans - 1);
+            return;
+        }
+        cout << "invalid input" << endl;
+    }
+}
+
+
+Boss::Boss():  NPC("Boss", "Boss Encounter: Players face the Dark Warlord, dodging attacks and summoning allies, ultimately defeating him to save the land.", 100, {}){}
+
+void Boss::takeItem(Player* player){
+    player->setPoison(true);
+    cout << this->getScript() << endl;
+    while(player->getCurrentHealth() > 0 && this->getCurrentHealth() > 0){
+        cout << "attack 1" << std::endl << "retreat 2" << std::endl;
+        int command;
+        std::cin >> command;
+        if(command == 1){
+            int playerDamage = player->getfinalAttack() > this->getDefense() ? player->getfinalAttack() + 1 :  player->getfinalAttack() - 1;
+            int monsterDamage = this->getAttack() > player->getfinalDefense() ? this->getAttack() + 1 : this->getAttack() - 1;
+            this->setCurrentHealth(this->getCurrentHealth() - playerDamage);
+            cout << "monster get damage " << playerDamage << endl;
+            player->takeDamage(monsterDamage);
+            cout << "you got damage " << monsterDamage << endl ;
+            cout << "monster life: " << this->getCurrentHealth() << endl;
+            cout << "your life: " << player->getCurrentHealth() << endl;
+            player->takeDamage(1);
+            cout << "you get 1 damage because you are poisoned" << endl;
+        }
+        else if(command == 2){
+            //double free or corruption
+            player->gopre();
+            break;
+        }
+        else{
+            std::cout << "invalid input" << endl;
+        }
+    }
+    if(player->getCurrentHealth() <= 0){
+    }
+    else if(this->getCurrentHealth() <= 0){
         player->sethead();
     }
 }

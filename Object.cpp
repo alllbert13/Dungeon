@@ -1,6 +1,6 @@
 #include "Object.h"
 #include "Player.h"
-
+// Object::Object(const Object& other) : name(other.name), tag(other.tag) {}
 Object::Object(){
     name = "NotDefined";
     tag = "NotDefined";

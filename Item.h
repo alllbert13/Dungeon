@@ -11,9 +11,11 @@ class Player;
 
 class Item: public Object
 {
+private:
+    int price;
 public:
     Item();
-    Item(string);
+    Item(string, int);
 
     /* Virtual function that you need to complete    */
     /* In Item, this function should deal with the   */
@@ -25,7 +27,7 @@ public:
     int getMaxHealthy();
     void takeItem(Player*);
     void setMaxHealthy(int);
-
+    int getPrice();
 };
 
 
@@ -54,7 +56,7 @@ public:
 class WaterBolt: public Item
 {
 public:
-    WaterBolt();
+    WaterBolt(int);
     void useItem(Player*);
 };
 
@@ -94,6 +96,13 @@ class Milk: public Item
 {
 public:
     Milk();
+    void useItem(Player* player);
+};
+
+class animalMeat: public Item
+{
+public:
+    animalMeat();
     void useItem(Player* player);
 };
 
